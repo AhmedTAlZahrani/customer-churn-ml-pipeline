@@ -1,5 +1,6 @@
 import logging
 from pathlib import Path
+from typing import Any, Dict, Optional, Union
 
 import joblib
 import numpy as np
@@ -20,13 +21,13 @@ class ModelTrainer:
     with stratified k-fold cross-validation.
     """
 
-    def __init__(self, output_dir="models"):
+    def __init__(self, output_dir: str = "models") -> None:
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.best_model = None
         self.best_model_name = None
 
-    def _get_models(self):
+    def _get_models(self) -> Dict[str, Any]:
         """Create fresh model instances for training."""
         return {
             "LogisticRegression": LogisticRegression(max_iter=1000, random_state=42),
@@ -37,7 +38,7 @@ class ModelTrainer:
                                         random_state=42, verbose=-1),
         }
 
-    def train(self, X, y, model_name="XGBoost"):
+    def train(self, X: Union[pd.DataFrame, np.ndarray], y: Union[pd.Series, np.ndarray], model_name: str = "XGBoost") -> Any:
         """Train a single model.
 
         Args:
@@ -53,7 +54,7 @@ class ModelTrainer:
         model.fit(X, y)
         return model
 
-    def cross_validate_model(self, X, y, model_name="XGBoost", n_folds=5):
+    def cross_validate_model(self, X: Union[pd.DataFrame, np.ndarray], y: Union[pd.Series, np.ndarray], model_name: str = "XGBoost", n_folds: int = 5) -> Dict[str, Dict[str, float]]:
         """Run stratified k-fold cross-validation for a model.
 
         Args:
@@ -80,7 +81,7 @@ class ModelTrainer:
             for metric in scoring
         }
 
-    def benchmark_all(self, X, y, n_folds=5):
+    def benchmark_all(self, X: Union[pd.DataFrame, np.ndarray], y: Union[pd.Series, np.ndarray], n_folds: int = 5) -> pd.DataFrame:
         """Compare all models using cross-validation.
 
         Args:
@@ -113,7 +114,7 @@ class ModelTrainer:
 
         return pd.DataFrame(rows).sort_values("roc_auc", ascending=False)
 
-    def save_model(self, model=None, name="best_model"):
+    def save_model(self, model: Optional[Any] = None, name: str = "best_model") -> None:
         """Save model to disk using joblib.
 
         Args:
@@ -125,7 +126,7 @@ class ModelTrainer:
         joblib.dump(model, path)
         logger.info(f"Model saved to {path}")
 
-    def load_model(self, name="best_model"):
+    def load_model(self, name: str = "best_model") -> Any:
         """Load model from disk."""
         path = self.output_dir / f"{name}.pkl"
         return joblib.load(path)

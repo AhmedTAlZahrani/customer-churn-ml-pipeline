@@ -1,8 +1,13 @@
+from pathlib import Path
+from typing import List, Optional, Tuple
+
 import pandas as pd
 import numpy as np
 
+from .exceptions import DataIngestionError
 
-def load_telco_data(path="data/telco_churn.csv"):
+
+def load_telco_data(path: str = "data/telco_churn.csv") -> Tuple[pd.DataFrame, pd.Series]:
     """Load and prepare the Telco Customer Churn dataset.
 
     Handles type conversions, missing values, and target encoding.
@@ -12,8 +17,25 @@ def load_telco_data(path="data/telco_churn.csv"):
 
     Returns:
         Tuple of (features DataFrame, target Series).
+
+    Raises:
+        DataIngestionError: If the file cannot be read or is malformed.
     """
-    df = pd.read_csv(path)
+    try:
+        df = pd.read_csv(path)
+    except FileNotFoundError:
+        raise DataIngestionError(
+            f"Data file not found: {path}", source_path=str(path)
+        )
+    except Exception as exc:
+        raise DataIngestionError(
+            f"Failed to read CSV file '{path}': {exc}", source_path=str(path)
+        ) from exc
+
+    if "Churn" not in df.columns:
+        raise DataIngestionError(
+            "Missing required column 'Churn' in dataset", source_path=str(path)
+        )
 
     df["TotalCharges"] = pd.to_numeric(df["TotalCharges"], errors="coerce")
     df["TotalCharges"].fillna(df["TotalCharges"].median(), inplace=True)
@@ -30,7 +52,7 @@ def load_telco_data(path="data/telco_churn.csv"):
     return X, y
 
 
-def get_feature_types(X):
+def get_feature_types(X: pd.DataFrame) -> Tuple[List[str], List[str]]:
     """Identify numeric and categorical columns.
 
     Args:

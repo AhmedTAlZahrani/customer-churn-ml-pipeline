@@ -1,5 +1,7 @@
 # Customer Churn ML Pipeline
 
+![CI](https://github.com/AhmedTAlZahrani/customer-churn-ml-pipeline/actions/workflows/ci.yml/badge.svg)
+
 ![Python](https://img.shields.io/badge/Python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)
 ![XGBoost](https://img.shields.io/badge/XGBoost-189FDD?style=for-the-badge)
@@ -129,6 +131,20 @@ Data Loader --> Feature Engineering --> Train/Test Split
                                      Save (joblib)
                                             |
                                    FastAPI + Docker
+```
+
+---
+
+## Running Tests
+
+```bash
+make test
+```
+
+Or run directly with coverage:
+
+```bash
+pytest tests/ --cov=src
 ```
 
 ---

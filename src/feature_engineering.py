@@ -1,4 +1,6 @@
 from collections import OrderedDict
+from typing import List, Optional, Union
+
 import numpy as np
 import warnings
 import pandas as pd
@@ -17,12 +19,12 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
     Compatible with scikit-learn Pipeline API.
     """
 
-    def __init__(self):
-        self._preprocessor = None
-        self._numeric_cols = None
-        self._categorical_cols = None
+    def __init__(self) -> None:
+        self._preprocessor: Optional[ColumnTransformer] = None
+        self._numeric_cols: Optional[List[str]] = None
+        self._categorical_cols: Optional[List[str]] = None
 
-    def fit(self, X, y=None):
+    def fit(self, X: pd.DataFrame, y: Optional[pd.Series] = None) -> "FeatureEngineer":
         """Fit the preprocessing pipeline.
 
         Args:
@@ -46,7 +48,7 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         self._preprocessor.fit(X)
         return self
 
-    def transform(self, X):
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Transform features using the fitted pipeline.
 
         Args:
@@ -61,16 +63,16 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         feature_names = self.get_feature_names()
         return pd.DataFrame(transformed, columns=feature_names, index=X.index)
 
-    def fit_transform(self, X, y=None):
+    def fit_transform(self, X: pd.DataFrame, y: Optional[pd.Series] = None) -> pd.DataFrame:
         """Fit and transform in one step."""
         return self.fit(X, y).transform(X)
 
-    def get_feature_names(self):
+    def get_feature_names(self) -> List[str]:
         """Return the feature names after transformation."""
         return self._preprocessor.get_feature_names_out().tolist()
 
     @staticmethod
-    def _add_derived_features(X):
+    def _add_derived_features(X: pd.DataFrame) -> pd.DataFrame:
         """Create interaction and derived features."""
         X = X.copy()
 

@@ -1,3 +1,5 @@
+from typing import Any, Dict, List, Optional, Union
+
 import numpy as np
 import pandas as pd
 import shap
@@ -9,12 +11,12 @@ class ModelExplainer:
     Provides global feature importance and local instance-level explanations.
     """
 
-    def __init__(self, model, feature_names=None):
+    def __init__(self, model: Any, feature_names: Optional[List[str]] = None) -> None:
         self.model = model
         self.feature_names = feature_names
         self._explainer = None
 
-    def _get_explainer(self, X_background):
+    def _get_explainer(self, X_background: pd.DataFrame) -> shap.Explainer:
         """Create a SHAP explainer with background data."""
         if self._explainer is None:
             if hasattr(self.model, "predict_proba"):
@@ -23,7 +25,7 @@ class ModelExplainer:
                 self._explainer = shap.TreeExplainer(self.model)
         return self._explainer
 
-    def explain_global(self, X, max_samples=500):
+    def explain_global(self, X: pd.DataFrame, max_samples: int = 500) -> pd.DataFrame:
         """Compute global SHAP feature importance.
 
         Args:
@@ -50,7 +52,7 @@ class ModelExplainer:
 
         return importance
 
-    def explain_instance(self, X, idx=0, max_samples=200):
+    def explain_instance(self, X: pd.DataFrame, idx: int = 0, max_samples: int = 200) -> Dict[str, Any]:
         """Explain a single prediction.
 
         Args:
