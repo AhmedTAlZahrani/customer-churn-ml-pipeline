@@ -8,7 +8,7 @@ import numpy as np
 import pandas as pd
 
 
-def generate_churn_data(n_records=1000, random_state=42):
+def generate_churn_data(n_records: int = 1000, random_state: int = 42) -> pd.DataFrame:
     """Generate synthetic churn data with realistic distributions.
 
     Args:
