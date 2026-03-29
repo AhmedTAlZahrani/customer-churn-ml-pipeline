@@ -72,9 +72,11 @@ class TestLoadTelcoData:
     """Test the CSV loading function."""
 
     def test_missing_file_raises(self, tmp_path):
-        """Passing a nonexistent path should raise FileNotFoundError."""
+        """Passing a nonexistent path should raise DataIngestionError."""
+        from src.exceptions import DataIngestionError
+
         bad_path = tmp_path / "nonexistent.csv"
-        with pytest.raises(FileNotFoundError):
+        with pytest.raises(DataIngestionError):
             load_telco_data(str(bad_path))
 
     def test_loads_from_generated_csv(self, raw_churn_df, tmp_path):

@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional, Union
 import numpy as np
 import pandas as pd
 import plotly.express as px
-import plotly.figure_factory as ff
 from sklearn.metrics import (
     classification_report,
     confusion_matrix,
